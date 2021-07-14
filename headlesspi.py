@@ -95,9 +95,13 @@ if len(sys.argv) > 1:
 else:
     cfgfile = 'SquishBox/squishboxconf.yaml'
 
+fsettings = {}
+hfb = re.search("card (\d+): sndrpihifiberry", subprocess.check_output(['aplay', '-l']).decode())
+if hfb: fsettings['audio.alsa.device'] = f"hw:{hfb[1]}"
+
 # start the patcher
 try:
-    pxr = patcher.Patcher(cfgfile)
+    pxr = patcher.Patcher(cfgfile, fsettings)
 except patcher.PatcherError as e:
     print("Error(s) in " + cfgfile, file=sys.stderr)
     error_blink(2)
